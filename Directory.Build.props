@@ -1,0 +1,49 @@
+<Project>
+
+  <!--
+    .NET solution-wide build settings. Imported automatically into every project
+    under apps/api, so the coding standard lives in exactly one place.
+    See docs/projectStandards/coding-standards.md for the rationale.
+  -->
+
+  <PropertyGroup>
+    <!-- Language / runtime baseline. Each project still declares its own
+         <TargetFramework> (the Web API uses net10.0). -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Static analysis: strict from day one (greenfield, no legacy debt). -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>All</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+
+    <!-- Reproducible builds. -->
+    <Deterministic>true</Deterministic>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+
+    <!-- IDE0005 (remove unnecessary usings) only runs at BUILD time when a
+         documentation file is generated (Roslyn limitation, dotnet/roslyn#41640).
+         We enable it solely to make that rule enforce; we don't want XML doc
+         comments, so CS1591 (missing doc comment) is suppressed. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- Third-party analyzers applied to every project. Versions are pinned
+       centrally in Directory.Packages.props. PrivateAssets=all keeps them
+       out of downstream package references. -->
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Analyzer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

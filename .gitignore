@@ -1,0 +1,65 @@
+# ───────────────────────────── Secrets / env ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+appsettings.*.local.json
+
+# ───────────────────────────── .NET (apps/api) ───────────────────────────
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+.vs/
+project.lock.json
+artifacts/
+[Tt]est[Rr]esult*/
+[Cc]overage*/
+*.coverage
+*.coveragexml
+BenchmarkDotNet.Artifacts/
+
+# ───────────────────────────── Node / Next.js (apps/web) ─────────────────
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+coverage/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ───────────────────────────── Tooling ───────────────────────────────────
+# Serena caches/logs are machine-local; project.yml + memories are committed.
+.serena/cache/
+.serena/logs/
+
+# Claude Code per-user local settings (committed: settings.json + project memory).
+.claude/settings.local.json
+
+# ───────────────────────────── Editors / OS ──────────────────────────────
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,39 @@
+<Project>
+
+  <!--
+    Central Package Management: every NuGet version is pinned here, once.
+    Project files reference packages by name only (no Version attribute).
+    Add new packages as <PackageVersion .../> entries below.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="Analyzers">
+    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.101" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+  </ItemGroup>
+
+  <!--
+    Runtime packages are added at scaffold time, NOT pinned now — several
+    Microsoft.Agents.AI.* packages still ship a `--prerelease` tag even post-1.0,
+    so versions must be verified at implementation time (verify versions at scaffold time).
+    Expected set when the API is scaffolded:
+      • Microsoft Agent Framework      Microsoft.Agents.AI.*  (pipeline orchestration)
+      • Microsoft.Extensions.AI        IChatClient seam + the OpenAI/Anthropic connectors
+      • your LLM provider SDK          (model + embeddings for RAG)
+      • Npgsql.EntityFrameworkCore.PostgreSQL + Pgvector  (DB + vector store)
+      • your OIDC/identity library     identity
+      • your S3-compatible object storage (e.g. AWSSDK.S3 or Minio)
+  -->
+
+</Project>
