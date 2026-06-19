@@ -2,8 +2,10 @@
 name: onboard
 description: Produce a structured "get up to speed on this whole project" orientation — vision, architecture, where things live, conventions, how to do common tasks, current state — grounded in the real code/config with pointers. Optionally writes/updates docs/ONBOARDING.md. Use when asked to onboard, give a project overview, or "how does this project work / where do I start". Read-only except the optional doc write.
 argument-hint: [--write to also produce docs/ONBOARDING.md]
-allowed-tools: Read, Glob, Grep, Bash, Edit, Write, Skill, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern, mcp__serena__list_dir, mcp__serena__find_file
+allowed-tools: Read, Glob, Grep, Bash, Edit, Write, Skill, mcp__serena__initial_instructions, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__search_for_pattern, mcp__serena__get_diagnostics_for_file, mcp__serena__list_dir, mcp__serena__find_file
 ---
+
+> **Serena MCP is mandatory for code (read-only here).** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use Serena for ALL code reading / searching / navigation — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads.
 
 # Onboard to the project
 

@@ -70,7 +70,17 @@ excluded_tools: []
 # list of tools to include that would otherwise be disabled (particularly optional tools that are disabled by default).
 # This extends the existing inclusions (e.g. from the global configuration).
 # Find the list of tools here: https://oraios.github.io/serena/01-about/035_tools.html
-included_optional_tools: []
+#
+# The `claude-code` context (see .mcp.json) drops Serena's own file-create/edit tools because it assumes the
+# native Claude Code Write/Edit are used. But our `enforce-serena` PreToolUse hook BLOCKS native Edit/Write on
+# .cs — so without re-including these, there is NO sanctioned way to create or replace a .cs file through Serena.
+# Re-include them here. (Takes effect on the next MCP server / Claude Code restart.)
+included_optional_tools:
+- create_text_file
+- replace_symbol_body
+- insert_after_symbol
+- insert_before_symbol
+- replace_content
 
 # fixed set of tools to use as the base tool set (if non-empty), replacing Serena's default set of tools.
 # This cannot be combined with non-empty excluded_tools or included_optional_tools.

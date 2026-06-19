@@ -140,7 +140,12 @@ Full detail in `coding-standards.md` (auto-loads when editing C#); these apply a
 
 ## Build
 
-- **Strict .NET build:** warnings = errors, `AnalysisMode=All` + Meziantou + SonarAnalyzer.
-  Style/naming/formatting violations **fail the build**; `dotnet format` autofixes formatting.
+- **Strict .NET build:** warnings = errors, `AnalysisMode=All` + Meziantou + SonarAnalyzer;
+  `dotnet format` autofixes formatting. **Caveat — `dotnet build` and `dotnet format` do NOT enforce all
+  Roslyn IDE analyzers: notably IDE naming rules like `IDE1006` (the `Async`-suffix rule). A `.cs` file can
+  build `0/0` yet still violate them.** The reliable catcher is the Roslyn LSP via Serena: after any `.cs`
+  change run **`mcp__serena__get_diagnostics_for_file`** (`min_severity: 2`) on the touched files. **The
+  complete `.cs` verification gate = `dotnet build` (warnings-as-errors) + Serena `get_diagnostics_for_file`**
+  (details + rationale in `docs/projectStandards/coding-standards.md`).
 - **Frontend:** ESLint + Prettier + strict `tsconfig` own TS/React quality (configured at
   scaffold time — see `frontend-standards.md`).

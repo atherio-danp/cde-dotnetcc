@@ -32,7 +32,7 @@ $reason = @"
 Native '$tool' on $ext files is disabled in this project — use the Serena MCP tools instead.
 - Read / navigate: mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern.
 - Edit by symbol (.cs): mcp__serena__replace_symbol_body, mcp__serena__insert_after_symbol, mcp__serena__insert_before_symbol.
-- Fine-grained edits (any file): mcp__serena__replace_regex.
+- Fine-grained / non-symbol edits: mcp__serena__replace_content.
 - Create or overwrite a file: mcp__serena__create_text_file.
 Re-do this change through the appropriate Serena tool.
 "@

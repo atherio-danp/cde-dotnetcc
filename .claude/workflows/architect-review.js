@@ -8,9 +8,12 @@ export const meta = {
 }
 
 // args: { scope?: string[], changedPaths?: string, planPath?: string }
-const scope = (args && Array.isArray(args.scope) && args.scope.length ? args.scope : ['backend'])
-const changed = (args && args.changedPaths) || 'the current git diff (run `git diff` to see it)'
-const planPath = (args && args.planPath) || null
+// Robust against args arriving as a JSON string (observed: some harness invocations stringify the
+// args object, which silently dropped an explicit `scope` and defaulted to backend-only review).
+const a = typeof args === 'string' ? JSON.parse(args) : (args || {})
+const scope = (Array.isArray(a.scope) && a.scope.length ? a.scope : ['backend'])
+const changed = a.changedPaths || 'the current git diff (run `git diff` to see it)'
+const planPath = a.planPath || null
 
 const LENSES = {
   backend: { agentType: 'architect-backend', what: 'the .NET backend under apps/api' },

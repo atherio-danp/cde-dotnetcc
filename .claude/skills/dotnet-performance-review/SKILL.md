@@ -1,8 +1,10 @@
 ---
 name: dotnet-performance-review
 description: Scan .NET/C# code for performance anti-patterns (async, memory/strings, collections/LINQ, regex, serialization, I/O) with tiered severity, reporting findings without editing. Use when auditing hot paths, reviewing allocation-heavy code, or analyzing the API for optimization opportunities.
-allowed-tools: Read, Glob, Grep, Bash, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__search_for_pattern
+allowed-tools: Read, Glob, Grep, Bash, mcp__serena__initial_instructions, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__search_for_pattern, mcp__serena__get_diagnostics_for_file, mcp__serena__list_dir, mcp__serena__find_file
 ---
+
+> **Serena MCP is mandatory for code (read-only here).** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use Serena for ALL code reading / searching / navigation — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads.
 
 # .NET performance review (read-only scan)
 

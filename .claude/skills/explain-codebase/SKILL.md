@@ -2,8 +2,10 @@
 name: explain-codebase
 description: Explain how a specific area / file / feature / topic actually works — grounded line-by-line in the real code, with file:line citations. Use when asked to explain, trace, or understand a part of the code (e.g. "explain the model router", "how does the agentic pipeline work", "trace what CreateProject does"). Read-only; documentarian, not critic.
 argument-hint: <area / file / feature / topic to explain>
-allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern, mcp__serena__list_dir, mcp__serena__find_file
+allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__serena__initial_instructions, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__search_for_pattern, mcp__serena__get_diagnostics_for_file, mcp__serena__list_dir, mcp__serena__find_file
 ---
+
+> **Serena MCP is mandatory for code (read-only here).** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use Serena for ALL code reading / searching / navigation — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads.
 
 # Explain the codebase (a specific area)
 

@@ -3,6 +3,8 @@ name: cqrs-kommand
 description: Author a CQRS command or query in the {{ProductName}} backend using the Kommand library, the three-scope validation model, and the Result<T> failure pattern. Use whenever creating or modifying a command/query/handler/validator in apps/api/{{ProjectName}}.Application, or wiring its endpoint in {{ProjectName}}.Api.
 ---
 
+> **Serena MCP is mandatory for C# code.** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use the Serena tools for ALL `.cs` reading / searching / navigation / creation / editing — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads. Native `Edit`/`Write` on `.cs` is hook-blocked (the TS/React frontend uses the native tools).
+
 # Authoring a Kommand command or query ({{ProductName}})
 
 Use this when adding a use case to the backend. The authoritative rules are
@@ -35,13 +37,18 @@ response together). The Application feature folder **mirrors** the API feature.
 - **Handler** = explicit constructor (no primary ctor) with `ArgumentNullException` guards; `HandleAsync`;
   injects the repositories it needs; **does not** open transactions or call `SaveChanges` (the interceptor
   does); returns success payloads or `Error.*`; catches a **narrow `DomainException`** → `Result.Failure`.
-- **Validator** (business scope) = `IValidator<TCommand>` returning `ValidationResult`; surfaces failures as a
-  failed `Result` (`Error.Validation(...)`), never as a thrown exception where avoidable.
+- **Validator** (business scope) = `IValidator<TCommand>` (in namespace `Kommand`) returning `ValidationResult`
+  (`Success()`/`Failure(...)`); put the stable error/i18n code in `ValidationError.ErrorCode`. *Note:* Kommand's
+  built-in `WithValidation()` interceptor **throws `ValidationException`** on failure — we skip it and register our
+  own interceptor that returns a failed `Result` (`Error.Validation(...)`); see
+  `.claude/rules/backend/cqrs-kommand.md`.
 - **Endpoint** = `IEndpoint`; contract-validate (shape + JWT-inferable authz, **no DB**); dispatch via
   `IMediator.SendAsync`/`QueryAsync`; map the `Result<T>` with `ToHttpResult` (always ProblemDetails on failure).
 
 ## Step 4 — check the conventions
-- `using Kommand.Abstractions;` canonical. Records for commands/queries/DTOs; rich classes for entities.
+- Imports: `using Kommand.Abstractions;` for command/handler/query/mediator types **and** `using Kommand;` for
+  validators/interceptors/`Unit` (a validator file needs `Kommand`, not `Kommand.Abstractions`). No unused `using`
+  (IDE0005 fails the build). Records for commands/queries/DTOs; rich classes for entities.
 - Handler returns `Result<T>`; railway helpers are `Map` / `Then` / `Match`.
 - No `Handlers/` folder, no single-file Application slices, no inlined response records, no primary ctors.
 - Validation lives in exactly one scope each: contract (API), business (`IValidator<T>`), invariant (domain throws).

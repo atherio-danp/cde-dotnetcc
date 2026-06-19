@@ -91,7 +91,8 @@ Execute top-to-bottom; build after each lettered group.
 ### Group A — <theme>
 - [ ] **A1** <imperative> (`path/File.cs`).
 ### Group <X> — Validate
-- [ ] **X1** `dotnet build …` — zero warnings.
+- [ ] **X1** `dotnet build …` — zero warnings (warnings = errors).
+- [ ] **X1b** Serena **`get_diagnostics_for_file`** (`min_severity: 2`) on every changed `.cs` — clean. (`dotnet build`/`dotnet format` miss IDE analyzers like `IDE1006`; the Roslyn LSP catches them — see `coding-standards.md`.)
 - [ ] **X2** testing-expert writes the §<n> test list.
 - [ ] **X3** `dotnet test …` green.
 
@@ -125,7 +126,7 @@ Execute top-to-bottom; build after each lettered group.
 - [ ] Locked-decisions ledger with stable IDs.
 - [ ] Every symbol referenced **verified to exist** (the workflow's step-1 analysis enforces this).
 - [ ] Code samples carry absolute path + lineage note; line numbers flagged as leads.
-- [ ] Ordered checklist ending in a **Validate** group (zero-warning build + green tests).
+- [ ] Ordered checklist ending in a **Validate** group (zero-warning build **+ clean Serena `get_diagnostics_for_file`** + green tests).
 - [ ] **Exact named-test list** (delegated to testing-expert).
 - [ ] OPEN QUESTIONS fenced off from verified facts; Assumptions surfaced; OUT-of-scope named.
 - [ ] Status banner uses exact counts, never "tests pass".

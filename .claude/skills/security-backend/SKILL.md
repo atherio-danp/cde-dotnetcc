@@ -1,8 +1,10 @@
 ---
 name: security-backend
 description: Audit the .NET backend (apps/api) for security issues against OWASP Top 10 mapped to .NET/Minimal API/EF Core (Npgsql), plus tenant isolation, secret handling, and EU data residency. Use when reviewing backend changes for security, or running a backend security audit. Preloaded by the security-auditor-backend agent.
-allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern
+allowed-tools: Read, Glob, Grep, Bash, Skill, mcp__serena__initial_instructions, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__search_for_pattern, mcp__serena__get_diagnostics_for_file, mcp__serena__list_dir, mcp__serena__find_file
 ---
+
+> **Serena MCP is mandatory for code (read-only here).** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use Serena for ALL code reading / searching / navigation — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads.
 
 # Backend security audit ({{ProductName}} .NET API)
 

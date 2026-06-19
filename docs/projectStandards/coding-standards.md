@@ -59,6 +59,31 @@ because deliberate inheritance exists in the domain model.
 
 ---
 
+## Catching what `dotnet build` and `dotnet format` miss (the LSP diagnostics gate)
+
+`dotnet build` (even with `EnforceCodeStyleInBuild=true` + `TreatWarningsAsErrors=true`) and `dotnet format`
+do **not** enforce *all* Roslyn analyzers. In particular the **IDE naming analyzers** — most notably
+**`IDE1006`** (our `Async`-suffix rule) — and some IDE-style rules are **not** reported by the command-line
+build, so a `.cs` file can build **`0/0`** yet still violate them (your IDE flags them; the CLI doesn't).
+`dotnet format` doesn't catch naming either (the fix would be a rename, which it won't apply).
+
+*Verified:* removing a `#pragma warning disable IDE1006` makes the rule appear in the Roslyn LSP while
+`dotnet build` stays green.
+
+**The reliable catcher is the Roslyn language server, surfaced via Serena.** After any `.cs` change, run
+**`mcp__serena__get_diagnostics_for_file`** with **`min_severity: 2`** (errors + warnings) on every touched
+file. The complete `.cs` verification gate is therefore:
+
+> **`dotnet build` (warnings-as-errors) + Serena `get_diagnostics_for_file` on the changed files.**
+
+This is enforced in the implementation loop (the `implementer` runs it after each unit; the `validator` fails a
+build-green-but-LSP-dirty file) and is a step in every plan's **Validate** gate
+(`implementation-plan-format.md`). When a flagged rule is a genuine false positive, suppress it **narrowly** at
+the spot — an inline `#pragma warning disable <ID>` or `[SuppressMessage]` with a one-line justification — not a
+broad `.editorconfig` downgrade.
+
+---
+
 ## Architecture & type conventions
 
 These encode our domain-modelling stance. Some are not machine-enforceable.

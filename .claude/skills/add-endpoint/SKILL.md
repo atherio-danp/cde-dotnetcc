@@ -2,8 +2,10 @@
 name: add-endpoint
 description: Add a Minimal API endpoint (a feature/use case) to the .NET API — feature folder, IEndpoint self-registration, contract validation, Kommand dispatch, Result→ProblemDetails. Use when adding or changing an HTTP endpoint under apps/api/{{ProjectName}}.Api.
 argument-hint: <Feature>/<UseCase> (e.g. Projects/CreateProject)
-allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Skill, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern, mcp__serena__create_text_file, mcp__serena__replace_symbol_body, mcp__serena__insert_after_symbol, mcp__serena__replace_regex
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Skill, mcp__serena__initial_instructions, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__search_for_pattern, mcp__serena__get_diagnostics_for_file, mcp__serena__list_dir, mcp__serena__find_file, mcp__serena__create_text_file, mcp__serena__replace_symbol_body, mcp__serena__insert_after_symbol, mcp__serena__insert_before_symbol, mcp__serena__replace_content, mcp__serena__rename_symbol, mcp__serena__safe_delete_symbol
 ---
+
+> **Serena MCP is mandatory for C# code.** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use the Serena tools for ALL `.cs` reading / searching / navigation / creation / editing — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads. Native `Edit`/`Write` on `.cs` is hook-blocked (the TS/React frontend uses the native tools).
 
 # Add a Minimal API endpoint
 

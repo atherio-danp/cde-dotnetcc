@@ -2,9 +2,11 @@
 name: run-impl-loop
 description: Drive the full implementation loop for an approved plan — analyze, implement, validate, test, architect-review, triage, fix, summarize. Use when Dan says to build / run an approved implementation plan from docs/plans.
 argument-hint: <path-to-approved-plan.md> [scope: backend|frontend|fullstack]
-disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Bash, mcp__serena__find_symbol, mcp__serena__get_symbols_overview, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern, Workflow, Task, Agent
+disable-model-invocation: false
+allowed-tools: Read, Glob, Grep, Bash, mcp__serena__initial_instructions, mcp__serena__find_symbol, mcp__serena__get_symbols_overview, mcp__serena__find_referencing_symbols, mcp__serena__search_for_pattern, Workflow, Task, Agent
 ---
+
+> **Serena MCP is mandatory for code (read-only here).** First call `mcp__serena__initial_instructions` to load the Serena tool manual, then use Serena for ALL code reading / searching / navigation — prefer symbol navigation (`get_symbols_overview` / `find_symbol` / `find_referencing_symbols`) over whole-file reads. (This skill mostly delegates to workflows/agents.)
 
 # Run the implementation loop
 

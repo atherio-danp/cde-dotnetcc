@@ -1,31 +1,34 @@
 # Kommand templates ({{ProductName}})
 
 Canonical skeletons. They encode the decisions: `Result<T>` returns, explicit constructors (no
-primary ctors), `using Kommand.Abstractions;`, three-scope validation, interceptor-owned transactions.
-Adjust names to the feature. *(`Result`/`Error`/`IValidator`/`IMediator` member shapes follow
-`docs/projectStandards/backend-architecture.md`; verify the exact Kommand signatures against the library
-when scaffolding — it is Dan's library and the published guide diverges from older code.)*
+primary ctors), correct Kommand namespaces, three-scope validation, interceptor-owned transactions.
+Adjust names to the feature. **Kommand signatures verified against NuGet `Kommand` `1.0.0-alpha.1` (2026-06-19).**
+Namespaces: `Kommand.Abstractions` = `ICommand`/`ICommandHandler`/`IQuery`/`IQueryHandler`/`IMediator`;
+`Kommand` = `IValidator`/`ValidationResult`/`ValidationError`/`Unit`/interceptors. `Result`/`Error` shapes follow
+`result-and-errors` + `docs/projectStandards/backend-architecture.md`.
+
+> `using`s go **above** the file-scoped namespace (`csharp_using_directive_placement = outside_namespace` — build error otherwise).
 
 ## Command (`{{ProjectName}}.Application/Projects/Commands/CreateProjectCommand.cs`)
 ```csharp
-namespace {{ProjectName}}.Application.Projects.Commands;
-
 using Kommand.Abstractions;
 using {{ProjectName}}.Application.Projects.DTOs;
 using {{ProjectName}}.Shared;
+
+namespace {{ProjectName}}.Application.Projects.Commands;
 
 public sealed record CreateProjectCommand(Guid TenantId, string Name) : ICommand<Result<ProjectResponse>>;
 ```
 
 ## Handler (`CreateProjectCommandHandler.cs`)
 ```csharp
-namespace {{ProjectName}}.Application.Projects.Commands;
-
 using Kommand.Abstractions;
 using {{ProjectName}}.Application.Projects; // IProjectRepository (cross-layer interface)
 using {{ProjectName}}.Application.Projects.DTOs;
 using {{ProjectName}}.Domain.Projects;
 using {{ProjectName}}.Shared;
+
+namespace {{ProjectName}}.Application.Projects.Commands;
 
 public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectCommand, Result<ProjectResponse>>
 {
@@ -54,9 +57,10 @@ public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectC
 
 ## Validator — business scope (`CreateProjectCommandValidator.cs`)
 ```csharp
-namespace {{ProjectName}}.Application.Projects.Commands;
+using Kommand;                              // IValidator, ValidationResult, ValidationError live in Kommand
+using {{ProjectName}}.Application.Projects; // IProjectRepository (cross-layer interface)
 
-using Kommand.Abstractions;
+namespace {{ProjectName}}.Application.Projects.Commands;
 
 public sealed class CreateProjectCommandValidator : IValidator<CreateProjectCommand>
 {
@@ -73,7 +77,8 @@ public sealed class CreateProjectCommandValidator : IValidator<CreateProjectComm
         // Contract checks (required/shape) belong at the API; invariants belong in the domain.
         if (await _projects.NameExistsAsync(request.TenantId, request.Name, cancellationToken).ConfigureAwait(false))
         {
-            return ValidationResult.Failure([new ValidationError(nameof(request.Name), "Name already in use.")]);
+            // ErrorCode carries the stable error/i18n code (clients map it); ErrorMessage is a dev fallback.
+            return ValidationResult.Failure([new ValidationError(nameof(request.Name), "Name already in use.", "project.name.duplicate")]);
         }
 
         return ValidationResult.Success();
@@ -83,11 +88,11 @@ public sealed class CreateProjectCommandValidator : IValidator<CreateProjectComm
 
 ## Query (`{{ProjectName}}.Application/Projects/Queries/GetProjectQuery.cs` + handler)
 ```csharp
-namespace {{ProjectName}}.Application.Projects.Queries;
-
 using Kommand.Abstractions;
 using {{ProjectName}}.Application.Projects.DTOs;
 using {{ProjectName}}.Shared;
+
+namespace {{ProjectName}}.Application.Projects.Queries;
 
 public sealed record GetProjectQuery(Guid TenantId, Guid ProjectId) : IQuery<Result<ProjectResponse>>;
 
@@ -110,12 +115,12 @@ public sealed class GetProjectQueryHandler : IQueryHandler<GetProjectQuery, Resu
 
 ## Endpoint — single file (`{{ProjectName}}.Api/Features/Projects/CreateProject.cs`)
 ```csharp
-namespace {{ProjectName}}.Api.Features.Projects;
-
 using Kommand.Abstractions;
 using {{ProjectName}}.Api.Endpoints;          // IEndpoint
 using {{ProjectName}}.Api.Http;               // ToHttpResult
 using {{ProjectName}}.Application.Projects.Commands;
+
+namespace {{ProjectName}}.Api.Features.Projects;
 
 public sealed record CreateProjectRequest(string Name);
 

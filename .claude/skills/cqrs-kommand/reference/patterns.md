@@ -20,13 +20,26 @@ Companion to `SKILL.md` + `templates.md`. Read alongside `.claude/rules/backend/
 - **Commit only on a successful `Result`** — a failed `Result` (logical failure, no throw) rolls back, as does any throw.
 - Handlers therefore **never** call `SaveChanges` or open transactions — they mutate tracked entities via
   repositories and return `Result<T>`. (Rare intermediate flush → `IUnitOfWork.SaveChangesAsync()`.)
-- The **validation interceptor runs BEFORE** the transaction interceptor (don't open a transaction for invalid input).
+- **Shape (verified against Kommand `1.0.0-alpha.1`):** `TransactionInterceptor<TCommand, TResponse> :
+  IInterceptor<TCommand, TResponse> where TCommand : ICommand<TResponse>` (in `{{ProjectName}}.Application`;
+  `using Kommand;` for `IInterceptor`/`RequestHandlerDelegate`). Implement **`HandleAsync(TCommand request,
+  RequestHandlerDelegate<TResponse> next, CancellationToken ct)`** (not `InterceptAsync`; `next` is parameterless)
+  and call `_unitOfWork.ExecuteInTransactionAsync(() => next(), ct)`.
+- **Queries skip it** *via the generic constraint* — `IInterceptor<TCommand,TResponse>` with `where TCommand :
+  ICommand<TResponse>` can't close over a query type, so MS DI omits it for queries (confirm this DI behaviour
+  when implemented).
+- **Ordering:** register the validation interceptor **before** `AddInterceptor(typeof(TransactionInterceptor<,>))`.
+  The first-registered interceptor is outermost, so validation runs **before** a transaction opens (don't open a
+  transaction for invalid input).
 
 ## Validation → Result, not exceptions
-- Business validation lives in a Kommand `IValidator<T>` (scope 2). Surface failures as a **failed `Result`**
-  (`Error.Validation(failures)`) — prefer a validation interceptor that returns the failed `Result<T>` over
-  Kommand's throwing default. *(Verify against Kommand's actual `WithValidation`; if it only throws, catch at
-  the boundary and map to ProblemDetails — but keep failures expressed as `Result` where possible.)*
+- Business validation lives in a Kommand `IValidator<T>` (scope 2), returning `ValidationResult.Failure(...)`
+  with the stable error/i18n code in `ValidationError.ErrorCode`. Failures must reach the client as
+  `Error.Validation(failures)` → ValidationProblemDetails.
+- **DECIDED (option b):** Kommand's built-in `WithValidation()` interceptor **throws `ValidationException`**
+  (verified against the source). We **skip `WithValidation()` and register our own validation interceptor** that
+  returns a failed `Result<T>` instead of throwing — keeping "no throw for expected failures" intact. See
+  `.claude/rules/backend/cqrs-kommand.md`.
 - Domain invariant violations **throw**; the handler catches a narrow `DomainException` and folds into
   `Result.Failure`.
 
@@ -38,5 +51,7 @@ Companion to `SKILL.md` + `templates.md`. Read alongside `.claude/rules/backend/
 - No `Commands/` + separate `Handlers/` folders, and no single-file vertical slices in the Application layer
   — **one public type per file**, handler beside its command/query.
 - **No primary constructors** (Kommand's own rule samples used them — we don't).
-- No double `using Kommand;` + `using Kommand.Abstractions;` — canonical is `using Kommand.Abstractions;`.
+- No **unused** `using` (IDE0005 fails the build) — but a file may legitimately need **both** `using Kommand;`
+  (validators/interceptors/`Unit`) **and** `using Kommand.Abstractions;` (command/handler/mediator types). Import
+  what's used; don't add an unused one.
 - Never confuse a Kommand command with a background-bus message.
